@@ -518,4 +518,109 @@ int main()
     }
     return 0;
 }
+/*******************************************************/
+//无向图最小路径覆盖，即欧拉路径的个数
+/*
+*大概做法是将图分成每一个联通块来计算，并在求联通块的时候看每个点的
+*的奇偶性，并将奇数度数的点放入堆里面，将每两个奇数点间连一条边，然
+*后跑fleury算法求欧拉路径即可。
+*输出为每条路径所走的边，正代表顺着跑，负代表反着跑
+*/
+#include<bits/stdc++.h>
+using namespace std;
+const int maxn=1e5+5;
+struct Edge
+{
+    int u,v,nxt;
+    int flag;
+Edge(int u,int v,int nxt,int flag=0)
+:u(u),v(v),nxt(nxt),flag(flag){}
+    Edge(){}
+}edges[maxn*4];
+int head[maxn],tot;
+int deg[maxn];
+void addedge(int u,int v)
+{
+    edges[tot]=Edge(u,v,head[u]);
+    head[u]=tot++;
+}
+void add_Edge(int u,int v)
+{
+    addedge(u,v);
+    addedge(v,u);
+    deg[u]++,deg[v]++;
+}
+int vis[maxn];
+vector<int>odd;
+
+void dfs(int u)
+{
+    vis[u]=1;
+    if(deg[u]%2)odd.push_back(u);
+    for(int i=head[u];~i;i=edges[i].nxt)
+    {
+        int v=edges[i].v;
+        if(!vis[v])
+            dfs(v);
+    }
+}
+int res;
+vector<int>rout[maxn];
+int n,m;
+void dfs2(int u)
+{
+for(int i=head[u];~i;i=edges[i].nxt)
+if(edges[i].flag==0&&edges[i^1].flag==0)
+    {
+        edges[i].flag=edges[i^1].flag=1;
+        int v=edges[i].v;
+        dfs2(v);
+        if(i>=2*m)++res;
+        else rout[res].push_back((i/2+1)*(2*(i&1)-1));
+    }
+}
+
+int main()
+{
+    while(~scanf("%d %d",&n,&m))
+    {
+        res=0;
+        memset(vis,0,sizeof(vis));
+        memset(deg,0,sizeof(deg));
+        memset(head,-1,sizeof(head));
+        for(int i=0;i<maxn;i++)rout[i].clear();
+        tot=0;
+        int u,v;
+        for(int i=1;i<=m;i++)
+        {
+            scanf("%d %d",&u,&v);
+            add_Edge(u,v);
+        }
+        for(int i=1;i<=n;i++)if(!vis[i]&&deg[i])
+        {
+            odd.clear();
+            dfs(i);
+            if(odd.empty())
+            {
+                odd.push_back(i);
+                odd.push_back(i);
+            }
+            int Size=odd.size();
+            for(int i=2;i<Size-1;i+=2)
+                add_Edge(odd[i],odd[i+1]);
+            ++res;
+            dfs2(odd[0]);
+        }
+        printf("%d\n",res);
+        for(int i=1;i<=res;i++)
+        {
+            printf("%d",rout[i].size());
+            for(int j=0;j<rout[i].size();j++)
+                printf(" %d",rout[i][j]);
+            puts("");
+        }
+
+    }
+    return 0;
+}
 
