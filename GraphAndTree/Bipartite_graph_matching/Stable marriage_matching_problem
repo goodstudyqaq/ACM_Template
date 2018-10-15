@@ -1,0 +1,185 @@
+1,poj1904
+题意：有n个王子，每个王子都有k个喜欢的妹子，每个王子只能和喜欢的妹子结婚，大臣给出一个匹配表，每个王子都和一个妹子结婚，但是国王不满意，他要求大臣给他另一个表，每个王子可以和几个妹子结婚，按序号升序输出妹子的编号，这个表应满足所有的王子最终都有妹子和他结婚。
+分析：首先建图，对于王子u来说，设他要和妹子v结婚，那么使妹子v与所有王子u喜欢的妹子连一条边。然后求强连通分量。
+如果妹子们在同一个强连通分量内，则她们可以共享她们之前匹配的王子们(雾)。
+
+2,hdu4685
+题意：n个王子和m个公主，王子只能和他喜欢的公主结婚，公主可以和所有的王子结婚，输出所有王子可能的结婚对象，
+必须保证王子与任意这些对象中的一个结婚，都不会影响到剩余的王子的配对数，也就是不能让剩余的王子中突然有一个人没婚可结了。
+分析：这题是poj 1904的加强版，poj 1904的王子和公主数是相等的，这里可以不等，且poj 1904给出了一个初始完美匹配，但是这题就要自己求。
+首先n,m个点做一次二分匹配，得到匹配数最大为res.相当于右边有m-res个点没有匹配，左边有n-res个点没有匹配。
+所以在左加m-res个点，和右边所有相连。
+在右边加n-res个点，和左边所有相连。
+然后做n+m-res，n+m-res个点的二分匹配。
+匹配数肯定是n+m-res;
+主要是得到匹配的情况。
+对于左边的点i.  把i相匹配的在右边的点，向其余和i相连的点连一有向边。
+然后做强连通缩点。
+如果边u-v. v和u匹配的点在一个连通分支，说明可以交换，可以u->v组合，不影响最大匹配数。
+#include<bits/stdc++.h>
+using namespace std;
+const int maxn = 1005;
+const int inf = 0x3f3f3f3f;
+bool map[maxn][maxn];
+int cx[maxn], cy[maxn];
+int dx[maxn], dy[maxn];
+bool used[maxn];
+int dist;
+int n, m;
+int nL, nR;
+bool bfs()
+{
+	queue<int>Q;
+	memset(dy, -1, sizeof(dy));
+	memset(dx, -1, sizeof(dx));
+	for (int i = 1;i <= nL;i++)if (cx[i] == -1)
+		Q.push(i), dx[i] = 0;
+	dist = inf;
+
+	while (!Q.empty())
+	{
+		int u = Q.front();Q.pop();
+		if (dx[u] > dist)break;
+		for (int i = 1;i <= nR;i++)if (map[u][i] && dy[i]==-1)
+		{
+			dy[i] = dx[u] + 1;
+			if (cy[i] == -1)dist = dy[i];
+			else
+			{
+				dx[cy[i]] = dy[i] + 1;
+				Q.push(cy[i]);
+			}
+		}
+	}
+	return dist != inf;
+}
+int find(int u)
+{
+	for (int i = 1;i <= nR;i++)if (map[u][i] && !used[i]&&dy[i]==dx[u]+1)
+	{
+		used[i] = 1;
+		if (cy[i] != -1 && dy[i] == dist)continue;
+		else if (cy[i] == -1 || find(cy[i]))
+		{
+			cx[u] = i;
+			cy[i] = u;
+			return 1;
+		}
+	}
+	return 0;
+}
+int MaxMatch()
+{
+	memset(cx, -1, sizeof(cx));
+	memset(cy, -1, sizeof(cy));
+	int ans = 0;
+	while (bfs())
+	{
+		memset(used, 0, sizeof(used));
+		for (int i = 1;i <= nL;i++)
+			if (cx[i] == -1)
+				ans += find(i);
+	}
+	return ans;
+}
+int DFN[maxn], LOW[maxn],id;
+int stack[maxn], s;
+int belong[maxn], bnum;
+bool vis[maxn];
+int link[maxn][maxn];
+void tarjan(int u)
+{
+	DFN[u] = LOW[u] = ++id;
+	stack[s++] = u;
+	vis[u] = 1;
+	for (int i = 1;i <= nR;i++)if (link[u][i])
+	{
+		if (!DFN[i])
+		{
+			tarjan(i);
+			LOW[u] = min(LOW[u], LOW[i]);
+		}
+		else if(vis[i])
+			LOW[u] = min(LOW[u], DFN[i]);
+	}
+	if (DFN[u] == LOW[u])
+	{
+		bnum++;
+		int v;
+		do
+		{
+			v = stack[s - 1];
+			vis[v] = 0;
+			s--;
+			belong[v] = bnum;
+		} while (v!=u);
+	}
+}
+void solve()
+{
+	for (int i = 1;i <= nR;i++)if (!DFN[i])
+		id=0,tarjan(i);
+}
+vector<int>V;
+void init()
+{
+	memset(DFN, 0, sizeof(DFN));
+	memset(map, 0, sizeof(map));
+	memset(link, 0, sizeof(link));
+	id = 0;bnum = 0;
+}
+int main()
+{
+	int T;
+	scanf("%d", &T);
+	int cas = 1;
+	while (T--)
+	{
+		scanf("%d %d", &n, &m);
+		init();
+		int tmp;
+		for (int i = 1;i <= n;i++)
+		{
+			int times;
+			scanf("%d", &times);
+			while (times--)
+			{
+				scanf("%d", &tmp);
+				map[i][tmp] = 1;
+			}
+		}
+		nL = n, nR = m;
+		int res = MaxMatch();
+		int num = n + m - res;
+		nL = nR = num;
+		for (int i = n + 1;i <= num;i++)
+			for (int j = 1;j <= num;j++)
+				map[i][j] = 1;
+		for (int i = 1;i <= n;i++)
+			for (int j = m + 1;j <= num;j++)
+				map[i][j] = 1;
+		MaxMatch();
+		for (int i = 1;i <= num;i++)
+		{
+			int to = cx[i];
+			for (int j = 1;j <= num;j++)if(map[i][j])
+				link[to][j] = 1;
+		}
+		solve();
+		printf("Case #%d:\n", cas++);
+		for (int i = 1;i <= n;i++)
+		{
+			V.clear();
+			int to = cx[i];
+			int blong = belong[to];
+			for (int j = 1;j <= m;j++)if (map[i][j] && belong[j] == blong)
+				V.push_back(j);
+			printf("%d", V.size());
+			for (int i = 0;i < V.size();i++)
+				printf(" %d", V[i]);
+			puts("");
+		}
+
+	}
+	return 0;
+}
