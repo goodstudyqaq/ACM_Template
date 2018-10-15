@@ -1,3 +1,3 @@
 # ACM
 AlgorithmCode
-@Author goodstudy
+Author goodstudy
