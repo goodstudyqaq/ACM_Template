@@ -1,3 +1,4 @@
+//ISAP + bfs初始化 + 栈优化
 const int maxn=100010;
 const int maxm=400010;
 const int inf=0x3f3f3f3f;
