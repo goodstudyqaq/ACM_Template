@@ -1,0 +1,15 @@
+//所有区间gcd的预处理
+//感觉要离线
+const int N=100;
+int n,i,j,a[N],l[N],v[N];
+int fun(int x,int y){return __gcd(x,y);}
+int main()
+{
+    for(scanf("%d",&n),i=1;i<=n;i++)scanf("%d",&a[i]);
+    for(i=1;i<=n;i++)for(v[i]=a[i],j=l[i]=i;j;j=l[j]-1){
+        v[j]=fun(v[j],a[i]);
+        while(l[j]>1&&fun(a[i],v[l[j]-1])==fun(a[i],v[j]))
+            l[j]=l[l[j]-1];
+        //[l[j]..j,i]区间内的值求fun均为v[j]
+    }
+}
