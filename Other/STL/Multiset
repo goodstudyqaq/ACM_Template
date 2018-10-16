@@ -1,0 +1,38 @@
+struct Node
+{
+    int x,y;
+};
+struct classcomp//先按照x从小到大排序，x相同按y从大到小排序
+{
+    bool operator()(const Node &a,const Node &b)const
+    {
+        if(a.x!=b.x)return a.x<b.x;
+        return a.y>b.y;
+    }
+};
+multiset<Node,classcomp>mt;
+multiset<Node,classcomp>::iterator it;
+/***********************************************/
+/*
+erase函数erase的作用是，使作为参数的迭代器失效，并返回指向该迭代器下一参数的迭代器。
+所以  遍历删除时需要这样写
+ for(vector<int>::iterator it=arr.begin(); it!=arr.end(); )
+    {
+        if(* it == 8)
+            it = arr.erase(it);
+        else
+            ++it;
+    }
+*/
+/************************************************/
+函数:equal_range()返回集合中与给定值相等的上下限的两个迭代器。
+#include<bits/stdc++.h>
+using namespace std;
+multiset<int>S;
+pair<multiset<int>::iterator,multiset<int>::iterator> ret;
+int main()
+{
+    S.insert(1);S.insert(5);S.insert(3);S.insert(8);S.insert(7);
+    ret=S.equal_range(2);
+    cout<<*ret.first<<endl;
+}
