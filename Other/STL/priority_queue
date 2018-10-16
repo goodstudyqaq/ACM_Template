@@ -11,15 +11,3 @@ struct cmp
     }
 };
 priority_queue<int,vector<int>,cmp>q;
-struct Node
-{
-    int x,y;
-};
-struct classcomp//先按照x从小到大排序，x相同按y从大到小排序
-{
-    bool operator()(const Node &a,const Node &b)const
-    {
-        if(a.x!=b.x)return a.x<b.x;
-        return a.y>b.y;
-    }
-};
