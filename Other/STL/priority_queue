@@ -1,0 +1,25 @@
+1.1	优先队列 priority_queue
+priority_queue<int>q1;//大的先出列
+priority_queue<int,vector<int>,greater<int> >q2;//functional 头文件，小的先出列
+
+struct cmp
+{
+    bool operator()(int x,int y)
+    {
+        return x>y;//小的先出列
+        //也可以写成其他方式，如:return p[x]>p[y];表示p[i]小的优先级高
+    }
+};
+priority_queue<int,vector<int>,cmp>q;
+struct Node
+{
+    int x,y;
+};
+struct classcomp//先按照x从小到大排序，x相同按y从大到小排序
+{
+    bool operator()(const Node &a,const Node &b)const
+    {
+        if(a.x!=b.x)return a.x<b.x;
+        return a.y>b.y;
+    }
+};
