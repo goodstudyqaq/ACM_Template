@@ -508,4 +508,148 @@ int main()
     }
     return 0;
 }
+/****************************************************/
+//区间lcm
+/*
+把每个数分解成质数形式，如有p^{a1}，那么加入p^1,p^2,p^3..p^{a1},每个权值为p，然后求区间不同数的积
+*/
+#include<bits/stdc++.h>
+using namespace std;
+const int maxn=30010;
+const int M=maxn*100;
+int n,q,tot;
+int a[maxn];
+int T[M],lson[M],rson[M],c[M];
+int build(int l,int r)
+{
+    int root=tot++;
+    c[root]=0;
+    if(l!=r)
+    {
+        int mid=l+r>>1;
+        lson[root]=build(l,mid);
+        rson[root]=build(mid+1,r);
+    }
+    return root;
+}
+int update(int root,int pos,int val,int l,int r)
+{
+    int newroot=tot++;
+    lson[newroot]=lson[root];
+    rson[newroot]=rson[root];
+    if(l==r)
+    {
+        c[newroot]=c[root]+val;
+        return newroot;
+    }
+    if(l!=r)
+    {
+        int mid=l+r>>1;
+        if(pos<=mid)
+            lson[newroot]=update(lson[root],pos,val,l,mid);
+        else rson[newroot]=update(rson[root],pos,val,mid+1,r);
+    }
+    c[newroot]=c[lson[newroot]]*c[rson[newroot]];
+    return newroot;
+}
+int query(int root,int L,int R,int l,int r)
+{
+    if(L<=l&&r<=R)
+        return c[root];
+    int m=l+r>>1;
+    int res=1;
+    if(L<=m)res*=query(lson[root],L,R,l,m);
+    if(R>m)res*=query(rson[root],L,R,m+1,r);
+    return res;
+}
+//
+bool is[maxn];
+int prm[maxn],id;
+void init()
+{
+    int k=0;
+    memset(is,1,sizeof(is));
+    is[0]=is[1]=0;
+    for(int i=2;i<maxn;i++)
+    {
+        if(is[i])prm[k++]=i;
+        for(int j=0;j<k&&(i*prm[j]<maxn);j++)
+        {
+            is[i*prm[j]]=0;
+            if(i%prm[j]==0)break;
+        }
+    }
+    id=k;
+}
+int factor[100][2];
+int fatCnt;
+int getFactors(long long x)
+{
+    fatCnt=0;
+    long long tmp=x;
+    for(int i=0;prm[i]<=tmp/prm[i];i++)
+    {
+        factor[fatCnt][1]=0;
+        if(tmp%prm[i]==0)
+        {
+            factor[fatCnt][0]=prm[i];
+            while(tmp%prm[i]==0)
+            {
+                factor[fatCnt][1]++;
+                tmp/=prm[i];
+            }
+            fatCnt++;
+        }
+    }
+    if(tmp!=1)
+    {
+        factor[fatCnt][0]=tmp;
+        factor[fatCnt++][1]=1;
+    }
+    return fatCnt;
+}
+int main()
+{
+    init();
+    int n;
+    scanf("%d",&n);
+    tot=0;
+    for(int i=1;i<=n;i++)
+        scanf("%d",&a[i]);
+    T[n+1]=build(1,n);
+    map<int,int>mp;
+    for(int i=n;i>=1;i--)
+    {
+        if(a[i]==1)
+        {
+            T[i]=update(T[i+1],i,1,1,n);
+            continue;
+        }
+        T[i]=T[i+1];
+        int fat=getFactors(a[i]);
+        int num=0;
+        for(int j=0;j<fat;j++)
+        {
+            int it=factor[j][0];
+            num+=it*factor[j][1];
+            for(int k=0;k<factor[j][1];k++,it*=factor[j][0])
+            {
+                if(mp.find(it)!=mp.end())
+                    T[i]=update(T[i],mp[it],-factor[j][0],1,n);
+                mp[it]=i;
+            }
+        }
+        T[i]=update(T[i],i,num,1,n);
+    }
+    int q;
+    scanf("%d",&q);
+    while(q--)
+    {
+        int l,r;
+        scanf("%d %d",&l,&r);
+        printf("%d\n",query(T[l],l,r,1,n));
+    }
+    return 0;
+}
+
 
