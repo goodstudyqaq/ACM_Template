@@ -1,0 +1,32 @@
+String Str;
+String的构造函数和析构函数如下:
+A)	string s;//空字符串s
+B)	string s(Str)//拷贝构造函数 生成str的复制品
+C)	string s(Str,stridx)//将字符串Str内始于位置stridx的部分当做字符串的初值
+D)	string s(cstr)//将C字符串作为s的初值
+E)	string s(cstr,cstr_len)//将C字符串前cstr_len个字符作为字符串s的初值
+F)	string s(num,c)//生成一个字符串，包含num个c字符
+G)	s.~string()//销毁所有字符，释放内存。之后就不能再用它了
+
+
+iterator insert( iterator i, const char &ch );
+  basic_string &insert( size_type index, const basic_string &str );
+  basic_string &insert( size_type index, const char *str );
+  basic_string &insert( size_type index1, const basic_string &str, size_type index2, size_type num );
+  basic_string &insert( size_type index, const char *str, size_type num );
+  basic_string &insert( size_type index, size_type num, char ch );
+  void insert( iterator i, size_type num, const char &ch );
+  void insert( iterator i, iterator start, iterator end );
+insert()函数的功能非常多: 
+•	在迭代器i表示的位置前面插入一个字符ch, 
+•	在字符串的位置index插入字符串str, 
+•	在字符串的位置index插入字符串str的子串(从index2开始，长num个字符), 
+•	在字符串的位置index插入字符串str的num个字符, 
+•	在字符串的位置index插入num个字符ch的拷贝, 
+•	在迭代器i表示的位置前面插入num个字符ch的拷贝, 
+•	在迭代器i表示的位置前面插入一段字符，从start开始，以end结束.
+
+
+c_str() //将内容以C_string返回
+substr() //返回某个子字符串substr()返回本字符串的一个子串，从index开始，长num个字符
+find()
