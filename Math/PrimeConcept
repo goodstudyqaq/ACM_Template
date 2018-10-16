@@ -1,0 +1,53 @@
+反素数
+定义:对于任何正整数n，其约数个数记为f\left(n\right),例如f\left(6\right)=4,如果某个正整数n满足:对任意的正整数i(0<i<n),都有f\left(i\right)<f(n),那么称n为反素数。
+
+性质:
+1.一个反素数的所有质因子必然是从2开始的连续若干个质数，因为反素数是保证约数个数为x的这个数n尽量小。
+2.同样的道理，如果n=2^{t_1}\ast3^{t_2}\ast5^{t_3}\ast7^{t_4}…，那么必有t_1\geqt_2\ \geqt_3\geqt_4\geq\ldots
+
+常见问题:
+1.	给定一个数n，求一个最小的正整数x，使得x的约数为n。
+2.	求出1~n中约数个数最多的这个数。
+//牛客网 求[1,n]内约数个数最多的数的约数个数，n<=1e18
+#include <stdio.h>
+#include <string.h>
+#include <iostream>
+#define LL long long
+using namespace std ;
+
+LL n,minnum,cnt ;
+const int prime[20] = {1,2,3,5,7,11,13,17,19,23,29,31,37,41,43,47} ;
+
+//num：当前枚举到的数，k：枚举到的第k大的质因子；cntt：该数的约数个数；maxxcnt：质因子个数上限；
+void dfs(LL num,LL k,LL cntt,int maxxcnt)
+{
+    if(k >= 16) return  ;
+
+    //如果约数个数更多或者相同，将最优解更新为当前数；
+    if(cntt > cnt || (cntt == cnt && num < minnum))
+    {
+        cnt = cntt ;
+        minnum = num ;
+    }
+    LL temp = num ;
+    for(LL i = 1 ; i <= maxxcnt ; i++) //开始枚举每个质因子的个数；
+    {
+        if(temp > n / prime[k])
+            break ;
+        temp *= prime[k] ; //累乘到当前数；
+        dfs(temp,k+1,cntt*(i+1),i) ;
+    }
+}
+int main()
+{
+    int T ;
+    scanf("%d",&T) ;
+    while(T--)
+    {
+        scanf("%lld",&n) ;
+        minnum = cnt = 1 ;
+        dfs(1,1,1,50) ;
+        printf("%lld\n",cnt) ;
+    }
+    return 0 ;
+}
