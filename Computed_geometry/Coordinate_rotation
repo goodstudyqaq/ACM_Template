@@ -1,0 +1,5 @@
+坐标旋转主要要找到参考系，对于一个坐标，我们需要维护它与参考系之间的角度及长度比。 
+坐标旋转公式 
+对于任意两个不同点A和B,A绕B旋转ang角度的坐标为:
+\left(\Delta x\astcos\left(ang\right)-\Delta y\astsin\left(ang\right)+x_B,\Delta y\astcos\left(ang\right)+\Delta x\astsin\left(ang\right)+y_B\right)
+//latex显示不出来。。
