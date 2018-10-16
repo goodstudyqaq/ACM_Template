@@ -4,4 +4,4 @@
 
 <a href="https://www.codecogs.com/eqnedit.php?latex=\left(\Delta&space;x\ast&space;cos\left(ang\right)-\Delta&space;y\ast&space;sin\left(ang\right)&plus;x_B,\Delta&space;y\ast&space;cos\left(ang\right)&plus;\Delta&space;x\ast&space;sin\left(ang\right)&plus;y_B\right)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?\left(\Delta&space;x\ast&space;cos\left(ang\right)-\Delta&space;y\ast&space;sin\left(ang\right)&plus;x_B,\Delta&space;y\ast&space;cos\left(ang\right)&plus;\Delta&space;x\ast&space;sin\left(ang\right)&plus;y_B\right)" title="\left(\Delta x\ast cos\left(ang\right)-\Delta y\ast sin\left(ang\right)+x_B,\Delta y\ast cos\left(ang\right)+\Delta x\ast sin\left(ang\right)+y_B\right)" /></a>
 
-//latex显示不出来。。
+
